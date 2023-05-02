@@ -122,13 +122,18 @@ class MahasiswaController extends Controller
 // //jika data berhasil diupdate, akan kembali ke halaman utama
 //  return redirect()->route('mahasiswas.index')
 //  ->with('success', 'Mahasiswa Berhasil Diupdate');
-//  }
-//  public function destroy( $Nim)
-//  {
-// //fungsi eloquent untuk menghapus data
-//  Mahasiswa::find($Nim)->delete();
-//  return redirect()->route('mahasiswas.index')
-//  -> with('success', 'Mahasiswa Berhasil Dihapus');
-//  }
+}
+ public function destroy( $Nim)
+ {
+//fungsi eloquent untuk menghapus data
+ Mahasiswa::find($Nim)->delete();
+ return redirect()->route('mahasiswas.index')
+ -> with('success', 'Mahasiswa Berhasil Dihapus');
  }
-};
+ 
+ public function nilai($Nim)
+    {
+        $Mahasiswa = Mahasiswa::find($Nim);
+        return view('mahasiswas.nilai', compact('Mahasiswa'));
+    }
+ };
