@@ -32,5 +32,4 @@
     </tr>
     @endforeach
 </table>
-<a class="btn btn-primary" href="{{ route('cetak_pdf' ,$Mahasiswa->Nim) }}">cetak_pdf</a>
 @endsection

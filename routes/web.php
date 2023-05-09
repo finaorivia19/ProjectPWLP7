@@ -19,6 +19,6 @@ Route::get('/', function () {
     return view('welcome');
    
 });
-
+Route::get('mahasiswas/cetak_pdf/{nim}', [MahasiswaController::class, 'cetak_pdf'])->name('cetak_pdf');
 Route::resource('mahasiswas', MahasiswaController::class);
 Route::get('mahasiswas/nilai/{nim}', [MahasiswaController::class, 'nilai']);

@@ -6,7 +6,8 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Models\Kelas;
 use Illuminate\Support\Facades\DB;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\PDF;
 
 class MahasiswaController extends Controller
 {
@@ -41,11 +42,16 @@ class MahasiswaController extends Controller
 
  public function store(Request $request)
  {
+    if($request->file('image')){
+        $image_name = $request->file('image')->store('images', 'public');
+    }
+
+
  //melakukan validasi data
  $request->validate([
  'Nim' => 'required',
  'Nama' => 'required',
-'TTL' => 'required',
+ 'TTL' => 'required',
  'kelas' => 'required',
  'Jurusan' => 'required',
  'No_Handphone' => 'required',
@@ -56,6 +62,7 @@ class MahasiswaController extends Controller
  $mahasiswas= new Mahasiswa;
  $mahasiswas->Nim=$request->get('Nim');
  $mahasiswas->Nama=$request->get('Nama');
+ $mahasiswas->featured_image=$image_name;
  $mahasiswas->TTL=$request->get('TTL');
  $mahasiswas->Jurusan=$request->get('Jurusan');
  $mahasiswas->No_Handphone=$request->get('No_Handphone');
@@ -91,6 +98,13 @@ class MahasiswaController extends Controller
 
  public function update(Request $request, $Nim)
  {
+    $Mahasiswa = Mahasiswa::find($Nim);
+   if($Mahasiswa->featured_image && file_exists(storage_path('app/public/' . $Mahasiswa->featured_image))){
+    Storage::delete('public/' . $Mahasiswa->featured_image);
+   }
+   $image_name = $request->file('image')->store('images', 'public');
+   
+
 //melakukan validasi data
  $request->validate([
  'Nim' => 'required',
@@ -106,6 +120,7 @@ class MahasiswaController extends Controller
  $mahasiswas->nim = $request->get('Nim');
  $mahasiswas->nama = $request->get('Nama');
  $mahasiswas->jurusan = $request->get('Jurusan');
+ $mahasiswas->featured_image = $image_name;
  //$mahasiswas->save();
 
  $kelas = new Kelas;
@@ -131,9 +146,16 @@ class MahasiswaController extends Controller
  -> with('success', 'Mahasiswa Berhasil Dihapus');
  }
  
- public function nilai($Nim)
+    public function nilai($Nim)
     {
         $Mahasiswa = Mahasiswa::find($Nim);
         return view('mahasiswas.nilai', compact('Mahasiswa'));
     }
+    public function cetak_pdf($Nim){
+        $Mahasiswa = Mahasiswa::find($Nim);
+        $pdf = PDF::loadview('mahasiswas.cetak_pdf',['Mahasiswa'=>$Mahasiswa]);
+        return $pdf->stream();
+     }
  };
+
+ 
